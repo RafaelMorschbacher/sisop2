@@ -20,7 +20,7 @@ public:
     struct hostent *server;
     char buffer[256];
 
-    UdpClient() : sockfd(-1), n(0), length(0), server(nullptr) {
+    UdpClient() : sockfd(-1), length(0), server(nullptr) {
         bzero(buffer, 256);
     }
 
