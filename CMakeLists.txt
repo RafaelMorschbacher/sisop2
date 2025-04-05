@@ -11,6 +11,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 include_directories(
     socket/classes/include
     socket/include
+    client/classes/include
+    server/classes/include
 )
 
 add_executable(server_executable
