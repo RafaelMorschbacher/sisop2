@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 
     const char *host_name = argv[1];
 
-    UdpClient client;
+    UdpClient client("1234.12345", 1234); // IP and port not being used yet
     client.initialize(host_name);
     client.sendMessage();
     client.receiveMessage();

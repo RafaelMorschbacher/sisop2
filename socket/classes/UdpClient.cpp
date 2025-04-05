@@ -1,6 +1,14 @@
 #include "UdpClient.h"
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
-UdpClient::UdpClient() : sockfd(-1), length(0), server(nullptr) {
+UdpClient::UdpClient(std::string destinationServerIP, int destinationServerPort) 
+    : sockfd(-1), length(0), server(nullptr), destinationServerIP(destinationServerIP), destinationServerPort(destinationServerPort) {
     bzero(buffer, 256);
 }
 

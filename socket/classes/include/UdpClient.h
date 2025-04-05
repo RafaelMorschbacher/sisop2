@@ -10,12 +10,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <string>
 
 #define PORT 4000
 
 class UdpClient {
 public:
-    UdpClient();
+    UdpClient(std::string destinationServerIP, int destinationServerPort);
     ~UdpClient();
 
     void initialize(const char *hostname);
@@ -28,6 +29,8 @@ private:
     struct sockaddr_in serv_addr, from;
     struct hostent *server;
     char buffer[256];
+    std::string destinationServerIP;
+    int destinationServerPort;
 };
 
 #endif // UDPCLIENT_H
