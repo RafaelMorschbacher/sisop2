@@ -1,0 +1,4 @@
+/Users/i746705/Desktop/UFRGS/SISOP2/sisop2/build/CMakeFiles/server_executable.dir
+/Users/i746705/Desktop/UFRGS/SISOP2/sisop2/build/CMakeFiles/client_executable.dir
+/Users/i746705/Desktop/UFRGS/SISOP2/sisop2/build/CMakeFiles/edit_cache.dir
+/Users/i746705/Desktop/UFRGS/SISOP2/sisop2/build/CMakeFiles/rebuild_cache.dir
