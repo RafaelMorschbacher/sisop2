@@ -3,18 +3,8 @@
 #include <regex>
 #include <arpa/inet.h>
 #include <unistd.h>
-
-#define BROADCAST_MESSAGE "DISCOVER_SERVER"
-#define EXIT_MESSAGE "exit"
-#define ACKNOWLEDGEDMESSAGE "acknowledged"
-const int BUFFER_SIZE = 1024;
-
-std::string addressToString(const sockaddr_in &addr)
-{
-    char ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(addr.sin_addr), ip, INET_ADDRSTRLEN);
-    return std::string(ip) + ":" + std::to_string(ntohs(addr.sin_port));
-}
+#include "Global.h"
+#include "Utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -81,7 +71,7 @@ int main(int argc, char *argv[])
     buffer[recvBytes] = '\0';
     if (std::strcmp(buffer, ACKNOWLEDGEDMESSAGE) == 0) {
         std::cout << "Handshake succesfully performed with server." << std::endl;
-        std::cout << "Server address: " << addressToString(serverAddr) << std::endl; 
+        std::cout << "Server address: " << Utils::addressToString(serverAddr) << std::endl; 
     }
     else {
         std::cout << "Handshake with server failed." << std::endl;
