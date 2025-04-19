@@ -75,7 +75,7 @@ public:
         buffer[recvBytes] = '\0';
         if (std::strcmp(buffer, ACKNOWLEDGEDMESSAGE) == 0)
         {
-            std::cout << "Handshake successfully performed with server." << std::endl;
+            std::cout << "Handshake successfully performed with server" << std::endl;
             std::cout << "Server address: " << Utils::addressToString(serverAddr) << std::endl;
             return true;
         }
