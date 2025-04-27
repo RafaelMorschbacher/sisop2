@@ -23,10 +23,10 @@ void InterfaceService::handleExitMessage(int serverSocket, sockaddr_in clientAdd
     if (it != clients.end())
     {
         it->second.condition_variable.notify_all();
-        std::cout << "Client " << clientKey << " is disconnecting..." << std::endl;
+        std::cout << "Client " << clientKey << " se desconectando..." << std::endl;
     }
     else
     {
-        std::cout << "Client " << clientKey << " not found." << std::endl;
+        std::cout << "Client " << clientKey << " não encontrado" << std::endl;
     }
 }

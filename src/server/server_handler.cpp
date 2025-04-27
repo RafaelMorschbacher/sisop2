@@ -127,14 +127,14 @@ int main(int argc, char *argv[])
 {
     if (argc != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+        std::cerr << "Uso: " << argv[0] << " <port>" << std::endl;
         return 1;
     }
 
     int port = std::atoi(argv[1]);
     if (port <= 0)
     {
-        std::cerr << "Invalid port number" << std::endl;
+        std::cerr << "Numero de porta invalido" << std::endl;
         return 1;
     }
 

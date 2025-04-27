@@ -53,7 +53,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
 
             if (iss.fail() || !iss.eof())
             {
-                response = "Invalid message format.";
+                response = "Formato de mensagem invalido.";
                 clientInfo.lastReq = requestId;
             }
             else
@@ -73,22 +73,22 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
                     }
 
 
-                    response = "Date " + Utils::getCurrentTime() + " - Number of requests: " + std::to_string(serverInfo.num_reqs) + " - Total accumulated: " + std::to_string(globalSum) + " (Thread ID: " + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ")";
+                    response = "Data " + Utils::getCurrentTime() + " - Nº de requests: " + std::to_string(serverInfo.num_reqs) + " - Total: " + std::to_string(globalSum) + " (Thread ID: " + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ")";
                 }
                 else
                 {
-                    response = "Incorrect request number.";
+                    response = "Número de request incorreto";
                 }
             }
             ssize_t sentBytes = sendto(serverSocket, response.c_str(), response.size(), 0,
                                     (struct sockaddr *)&msg.clientAddr, msg.clientAddrLen);
             if (sentBytes < 0)
             {
-                std::cerr << "Error sending response to client " << clientKey << "." << std::endl;
+                std::cerr << "Erro ao enviar response ao client " << clientKey << "." << std::endl;
             }
             else
             {
-                std::cout << "Response sent to client " << clientKey << ": " << response << std::endl;
+                std::cout << "Response enviada ao client " << clientKey << ": " << response << std::endl;
             }
         }
     }

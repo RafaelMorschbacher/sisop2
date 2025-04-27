@@ -24,7 +24,7 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
     std::lock_guard<std::mutex> lock(clientsMutex);
     if (clients.find(clientKey) != clients.end())
     {
-        std::cout << "Client " << clientKey << " is already connected." << std::endl;
+        std::cout << "Client " << clientKey << " já está conectado." << std::endl;
         return;
     }
 
@@ -38,12 +38,12 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
     ssize_t sentBytes = sendto(serverSocket, ACKNOWLEDGEDMESSAGE, 12, 0, (struct sockaddr *)&clientAddr, clientAddrLen);
     if (sentBytes < 0)
     {
-        std::cerr << "Error sending acknowledge message to client " << clientKey << "." << std::endl;
-        fprintf(file, "Error sending acknowledge message to client %s.\n", clientKey.c_str());
+        std::cerr << "Erro ao enviar mensagem de acknowledge para o client  " << clientKey << "." << std::endl;
+        fprintf(file, "Erro ao enviar mensagem de acknowledge para o client  %s.\n", clientKey.c_str());
     }
     else
     {
-        std::cout << "Handshake sent to client " << clientKey << "." << std::endl;
-        fprintf(file, "Handshake sent to client %s.\n", clientKey.c_str());
+        std::cout << "Handshake enviado ao client " << clientKey << "." << std::endl;
+        fprintf(file, "Handshake enviado ao client %s.\n", clientKey.c_str());
     }
 }
