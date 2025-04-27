@@ -12,6 +12,7 @@
 #include <ctime>
 #include "Utils.h"
 
+// Função que converte um endereço IP e porta em uma string no formato "IP:PORT".
 std::string Utils::addressToString(const sockaddr_in &addr)
 {
     char ip[INET_ADDRSTRLEN];
@@ -19,15 +20,7 @@ std::string Utils::addressToString(const sockaddr_in &addr)
     return std::string(ip) + ":" + std::to_string(ntohs(addr.sin_port));
 }
 
-/**
- * @brief Retrieves the current local time as a formatted string.
- *
- * This function gets the current local time and formats it into a string
- * in the format "YYYY-MM-DD HH:MM:SS".
- *
- * @return A string representing the current local time.
- */
-
+ // Função que obtém a hora local atual em uma string no formato "YYYY-MM-DD HH:MM:SS".
 std::string Utils::getCurrentTime()
 {
     char timeBuffer[80];

@@ -27,7 +27,7 @@ public:
 
     bool initializeSocket(int broadcastPort)
     {
-        // Create a UDP socket
+        // Criação de socket UDP
         clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
         if (clientSocket < 0)
         {
@@ -35,7 +35,7 @@ public:
             return false;
         }
 
-        // Enable broadcast
+        // Ativa o socket para permitir broadcast
         int broadcastEnable = 1;
         if (setsockopt(clientSocket, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) < 0)
         {
@@ -44,7 +44,7 @@ public:
             return false;
         }
 
-        // Set broadcast address
+        // Configura o endereço do servidor para o broadcast
         memset(&broadcastAddr, 0, sizeof(broadcastAddr));
         broadcastAddr.sin_family = AF_INET;
         broadcastAddr.sin_port = htons(broadcastPort);
@@ -55,7 +55,7 @@ public:
 
     bool performHandshake()
     {
-        // Send broadcast message
+        // Envia mensagem de broadcast para o servidor
         int broadcastReturn = sendto(clientSocket, BROADCAST_MESSAGE, strlen(BROADCAST_MESSAGE), 0, (struct sockaddr *)&broadcastAddr, sizeof(broadcastAddr));
         if (broadcastReturn < 0)
         {
@@ -71,7 +71,7 @@ public:
             return false;
         }
 
-        // Test "acknowledged" message received from server
+        // Verifica mensagem de acknowledgment
         buffer[recvBytes] = '\0';
         if (std::strcmp(buffer, ACKNOWLEDGEDMESSAGE) == 0)
         {
@@ -94,10 +94,10 @@ public:
             std::cout << "Enter a number to send to the server (or 'exit' to disconnect): ";
             std::getline(std::cin, message);
 
-            // Check if the user wants to exit or the input stream is closed
+            // Verifica se o usuario quer sair ou se o input stream terminou
             if (std::cin.eof() or message == EXIT_MESSAGE)
             {
-                // Send exit message to the server and break the loop
+                // Envia mensagem de desconexão
                 std::cout << "Disconnecting from server..." << std::endl;
                 sendto(clientSocket, EXIT_MESSAGE, 4, 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
                 break;

@@ -28,13 +28,13 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
         return;
     }
 
-    // If the client is not already connected, create a new entry for it and a new thread to process its messages
+    // Se o cliente não estiver conectado, cria uma nova entrada para ele e uma nova thread para processar suas mensagens
     ClientInfo &clientInfo = clients[clientKey];
     clientInfo.lastReq = 0;
     clientInfo.lastSum = 0;
     clientInfo.workerThread = std::thread(ProcessingService::processMessage, serverSocket, clientKey);
 
-    // Send the handshake to the client
+    // Envia mensagem de acknowledgment para o client
     ssize_t sentBytes = sendto(serverSocket, ACKNOWLEDGEDMESSAGE, 12, 0, (struct sockaddr *)&clientAddr, clientAddrLen);
     if (sentBytes < 0)
     {

@@ -21,7 +21,9 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
 
     while (true)
     {
-        // Wait for a message in the queue to process
+        // Espera por uma mensagem na fila para processar
+        // Se a fila estiver vazia, espera até que uma nova mensagem chegue
+        // Se a fila não estiver vazia, processa a mensagem
         {
             std::unique_lock<std::mutex> lock(clientInfo.queueMutex);
             clientInfo.condition_variable.wait(lock, [&clientInfo]()
@@ -37,7 +39,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
         {
             Message msg;
 
-            // get the top message from the queue
+            // Pega a mensagem do top da fila
             {
                 std::lock_guard<std::mutex> lock(clientInfo.queueMutex);
                 msg = clientInfo.messageQueue.front();
@@ -56,12 +58,12 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
             }
             else
             {
-                // Check if the request ID is the expected one
+                // Verifica se o ID da requisição é o ID esperado
                 if (requestId == clientInfo.lastReq + 1)
                 {
                     clientInfo.lastReq = requestId;
 
-                    // Update global sum and number of requests with a mutex
+                    // Atualiza a soma global e o número de requisições com um mutex
                     {
                         std::lock_guard<std::mutex> lock(globalVarMutex);
                         globalSum += clientNumber;

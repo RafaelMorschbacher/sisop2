@@ -26,7 +26,7 @@ public:
 
     bool initialize()
     {
-        // Create a UDP socket
+        // Criação de socket UDP
         serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
         if (serverSocket < 0)
         {
@@ -34,12 +34,12 @@ public:
             return false;
         }
 
-        // Set server address
+        // Configuração do endereço do servidor
         serverAddr.sin_family = AF_INET;
         serverAddr.sin_addr.s_addr = INADDR_ANY;
         serverAddr.sin_port = htons(port);
 
-        // Bind the created socket to an address and port
+        // Faz o bind do socket ao endereço e porta
         if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
         {
             std::cerr << "Error binding socket to address." << std::endl;
@@ -59,7 +59,7 @@ public:
     {
         char buffer[BUFFER_SIZE];
 
-        // Main loop to receive messages from clients
+        // Loop principal para receber mensagens de clients
         while (true)
         {
             socklen_t clientAddrLen = sizeof(clientAddr);
@@ -74,21 +74,21 @@ public:
             buffer[recvBytes] = '\0';
             std::string message(buffer);
 
-            // Check if the message is a discovery message
+            // Verifica se a mensagem é uma mensagem de broadcast
             if (std::strcmp(message.c_str(), BROADCAST_MESSAGE) == 0)
             {
                 DiscoveryService::handleDiscoveryMessage(serverSocket, clientAddr, clientAddrLen);
                 continue;
             }
 
-            // Check if the message is an exit message
+            // Verifica se a mensagem é uma mensagem de desconexão
             if (std::strcmp(message.c_str(), EXIT_MESSAGE) == 0)
             {
                 InterfaceService::handleExitMessage(serverSocket, clientAddr, clientAddrLen);
                 continue;
             }
 
-            // If the message is not a discovery or exit message, process it
+            // Se a mensagem não for um broadcast ou desconexão, trata como uma mensagem normal
             std::string clientKey = Utils::addressToString(clientAddr);
             {
                 std::lock_guard<std::mutex> lock(clientsMutex);
