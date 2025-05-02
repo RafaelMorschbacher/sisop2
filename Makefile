@@ -10,7 +10,7 @@ FILE ?=
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -pthread
-INCLUDES = -Isrc/structs -Isrc/utils -Isrc/services -Isrc/server -Isrc/client -Isrc/global_attributes
+INCLUDES = -Isrc/structs -Isrc/utils -Isrc/services -Isrc/server -Isrc/client -Isrc/global_attributes -Isrc/handlers
 
 CLIENT_SRC = src/client/client_handler.cpp
 SERVER_SRC = src/server/server_handler.cpp
@@ -18,8 +18,8 @@ SERVER_SRC = src/server/server_handler.cpp
 CLIENT_TARGET = client_app
 SERVER_TARGET = server_app
 
-CLIENT_OBJS = src/client/client_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o
-SERVER_OBJS = src/server/server_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o
+CLIENT_OBJS = src/client/client_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o src/handlers/ClientHandler.o
+SERVER_OBJS = src/server/server_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o src/handlers/ServerHandler.o
 
 all: $(CLIENT_TARGET) $(SERVER_TARGET)
 
@@ -48,6 +48,12 @@ src/services/DiscoveryService.o: src/services/DiscoveryService.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 src/services/ProcessingService.o: src/services/ProcessingService.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+src/handlers/ServerHandler.o: src/handlers/ServerHandler.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+src/handlers/ClientHandler.o: src/handlers/ClientHandler.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 run-client: $(CLIENT_TARGET)
