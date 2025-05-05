@@ -41,6 +41,6 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
     }
     else
     {
-        std::cout << "Handshake enviado ao client " << clientKey << "." << std::endl;
+        // std::cout << "Handshake enviado ao client " << clientKey << "." << std::endl;
     }
 }

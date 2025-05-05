@@ -73,10 +73,14 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
                     }
 
 
-                    response = Utils::getCurrentTime() + " server " + Utils::addressToString(msg.clientAddr) + " id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum);
+                    response = /* Utils::getCurrentTime() + " client " + Utils::addressToString(msg.clientAddr) + */" id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum);
                 }
                 else
                 {
+                    if(requestId <= clientInfo.lastReq)
+                    {
+                        std::cout << Utils::getCurrentTime() + " client " +  Utils::addressToString(msg.clientAddr) + " DUP!! " "id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum) << std::endl;
+                    }
                     response = "Número de request incorreto";
                 }
             }
@@ -88,7 +92,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
             }
             else
             {
-                std::cout << response << std::endl;
+                std::cout << Utils::getCurrentTime() + " client " + Utils::addressToString(msg.clientAddr) + " " + response << std::endl;
             }
         }
     }
