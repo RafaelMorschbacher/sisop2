@@ -18,7 +18,6 @@
 
 void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clientAddr, socklen_t clientAddrLen)
 {
-    FILE *file = fopen("src/log_log.log", "w");
     std::string clientKey = Utils::addressToString(clientAddr);
 
     std::lock_guard<std::mutex> lock(clientsMutex);
@@ -39,11 +38,9 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
     if (sentBytes < 0)
     {
         std::cerr << "Erro ao enviar mensagem de acknowledge para o client  " << clientKey << "." << std::endl;
-        fprintf(file, "Erro ao enviar mensagem de acknowledge para o client  %s.\n", clientKey.c_str());
     }
     else
     {
         std::cout << "Handshake enviado ao client " << clientKey << "." << std::endl;
-        fprintf(file, "Handshake enviado ao client %s.\n", clientKey.c_str());
     }
 }

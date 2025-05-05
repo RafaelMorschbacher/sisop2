@@ -87,12 +87,18 @@ void ClientHandler::mainLoop()
 
         socklen_t serverAddrLen = sizeof(serverAddr);
         int recvBytes = recvfrom(clientSocket, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&serverAddr, &serverAddrLen);
-        if (recvBytes < 0)
+        while(recvBytes < 0)
         {
-            std::cerr << "Erro ao receber resposta do servidor." << std::endl;
-            continue;
+            std::cerr << "Erro ao receber resposta do servidor, iniciando retransmissão." << std::endl;
+            sendto(clientSocket, fullMessage.c_str(), fullMessage.size(), 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+            recvBytes = recvfrom(clientSocket, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&serverAddr, &serverAddrLen);
         }
+        // if (recvBytes < 0)
+        // {
+        //     std::cerr << "Erro ao receber resposta do servidor, iniciando retransmissão." << std::endl;
+            
+        // }
         buffer[recvBytes] = '\0';
-        std::cout << "Resposta do servidor: " << buffer << std::endl;
+        std::cout << buffer << std::endl;
     }
 }

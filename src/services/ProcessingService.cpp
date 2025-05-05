@@ -73,7 +73,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
                     }
 
 
-                    response = "Data " + Utils::getCurrentTime() + " - Nº de requests: " + std::to_string(serverInfo.num_reqs) + " - Total: " + std::to_string(globalSum) + " (Thread ID: " + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ")";
+                    response = Utils::getCurrentTime() + " server " + Utils::addressToString(msg.clientAddr) + " id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum);
                 }
                 else
                 {
@@ -88,7 +88,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
             }
             else
             {
-                std::cout << "Response enviada ao client " << clientKey << ": " << response << std::endl;
+                std::cout << response << std::endl;
             }
         }
     }

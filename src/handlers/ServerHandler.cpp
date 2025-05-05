@@ -41,10 +41,7 @@ bool ServerHandler::initialize()
         return false;
     }
 
-    std::cout << "UDP server started on port " << port << "." << std::endl;
-    std::cout << "Main thread ID: " << std::this_thread::get_id() << "." << std::endl;
-    std::cout << "Current sum: " << std::to_string(globalSum) << std::endl;
-    std::cout << "Total requests: " << std::to_string(serverInfo.num_reqs) << std::endl;
+    std::cout << Utils::getCurrentTime() + " num_reqs " << std::to_string(serverInfo.num_reqs) << + " total_sum " << std::to_string(globalSum) << std::endl;
 
     return true;
 }
