@@ -15,8 +15,8 @@ INCLUDES = -Isrc/structs -Isrc/utils -Isrc/services -Isrc/server -Isrc/client -I
 CLIENT_SRC = src/client/client_handler.cpp
 SERVER_SRC = src/server/server_handler.cpp
 
-CLIENT_TARGET = client_app
-SERVER_TARGET = server_app
+CLIENT_TARGET = cliente
+SERVER_TARGET = servidor
 
 CLIENT_OBJS = src/client/client_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o src/handlers/ClientHandler.o
 SERVER_OBJS = src/server/server_handler.o src/utils/Utils.o src/global_attributes/Global.o src/services/InterfaceService.o src/services/DiscoveryService.o src/services/ProcessingService.o src/handlers/ServerHandler.o
