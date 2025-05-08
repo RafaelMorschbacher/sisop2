@@ -24,7 +24,6 @@ void InterfaceService::handleExitMessage(int serverSocket, sockaddr_in clientAdd
     if (it != clients.end())
     {
         cout << "Client " << clientKey << " se desconectando..." << endl;
-        clients.erase(clientKey);
         it->second.condition_variable.notify_all();
     }
     else

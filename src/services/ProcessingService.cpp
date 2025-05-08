@@ -94,4 +94,8 @@ void ProcessingService::processMessage(int serverSocket, const string &clientKey
             }
         }
     }
+    {
+        lock_guard<mutex> clientsLock(clientsMutex);
+        clients.erase(clientKey);
+    }
 }
