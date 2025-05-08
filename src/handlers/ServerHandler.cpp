@@ -28,7 +28,7 @@ bool ServerHandler::initialize()
     serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (serverSocket < 0)
     {
-        std::cerr << "Error creating server socket." << std::endl;
+        cerr << "Erro ao criar socket no servidor." << endl;
         return false;
     }
 
@@ -38,7 +38,7 @@ bool ServerHandler::initialize()
 
     if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        std::cerr << "Error binding socket to address." << std::endl;
+        cerr << "Erro ao fazer o bind do socket ao endereço" << endl;
         close(serverSocket);
         return false;
     }
@@ -58,7 +58,7 @@ void ServerHandler::startListening()
                                  (struct sockaddr *)&clientAddr, &clientAddrLen);
         if (recvBytes <= 0)
         {
-            std::cerr << "Error receiving data." << std::endl;
+            cerr << "Erro ao receber dados" << endl;
             continue;
         }
 
@@ -91,7 +91,7 @@ void ServerHandler::startListening()
             }
             else
             {
-                std::cout << "Message received from unregistered client: " << clientKey << "." << std::endl;
+                cout << "Mensagem recebida de um cliente não registrado na lista de clientes: " << clientKey << "." << endl;
             }
         }
     }
