@@ -14,19 +14,22 @@
 #include "Utils.h"
 #include "Global.h"
 
+using namespace std;
 void InterfaceService::handleExitMessage(int serverSocket, sockaddr_in clientAddr, socklen_t clientAddrLen)
 {
-    std::string clientKey = Utils::addressToString(clientAddr);
+    string clientKey = Utils::addressToString(clientAddr);
 
-    std::lock_guard<std::mutex> lock(clientsMutex);
+    lock_guard<mutex> lock(clientsMutex);
     auto it = clients.find(clientKey);
     if (it != clients.end())
     {
+        cout << "Client " << clientKey << " se desconectando..." << endl;
+        clients.erase(clientKey);
         it->second.condition_variable.notify_all();
-        std::cout << "Client " << clientKey << " se desconectando..." << std::endl;
     }
     else
     {
-        std::cout << "Client " << clientKey << " não encontrado" << std::endl;
+        cout << "Client " << clientKey << " não encontrado" << endl;
     }
+
 }

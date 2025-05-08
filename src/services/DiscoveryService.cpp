@@ -14,16 +14,16 @@
 #include "Utils.h"
 #include "Global.h"
 #include "ProcessingService.h"
-
+using namespace std;
 
 void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clientAddr, socklen_t clientAddrLen)
 {
-    std::string clientKey = Utils::addressToString(clientAddr);
+    string clientKey = Utils::addressToString(clientAddr);
 
-    std::lock_guard<std::mutex> lock(clientsMutex);
+    lock_guard<mutex> lock(clientsMutex);
     if (clients.find(clientKey) != clients.end())
     {
-        std::cout << "Client " << clientKey << " já está conectado." << std::endl;
+        cout << "Client " << clientKey << " já está conectado." << endl;
         return;
     }
 
@@ -31,16 +31,13 @@ void DiscoveryService::handleDiscoveryMessage(int serverSocket, sockaddr_in clie
     ClientInfo &clientInfo = clients[clientKey];
     clientInfo.lastReq = 0;
     clientInfo.lastSum = 0;
-    clientInfo.workerThread = std::thread(ProcessingService::processMessage, serverSocket, clientKey);
+    clientInfo.workerThread = thread(ProcessingService::processMessage, serverSocket, clientKey);
 
     // Envia mensagem de acknowledgment para o client
     ssize_t sentBytes = sendto(serverSocket, ACKNOWLEDGEDMESSAGE, 12, 0, (struct sockaddr *)&clientAddr, clientAddrLen);
     if (sentBytes < 0)
     {
-        std::cerr << "Erro ao enviar mensagem de acknowledge para o client  " << clientKey << "." << std::endl;
+        cerr << "Erro ao enviar mensagem de acknowledge para o client  " << clientKey << "." << endl;
     }
-    else
-    {
-        // std::cout << "Handshake enviado ao client " << clientKey << "." << std::endl;
-    }
+
 }

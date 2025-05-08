@@ -14,8 +14,9 @@
 #include "ClientInfo.h"
 #include "Global.h"
 #include "Utils.h"
-     
-void ProcessingService::processMessage(int serverSocket, const std::string &clientKey)
+using namespace std;
+
+void ProcessingService::processMessage(int serverSocket, const string &clientKey)
 {
     ClientInfo &clientInfo = clients[clientKey];
 
@@ -25,7 +26,7 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
         // Se a fila estiver vazia, espera até que uma nova mensagem chegue
         // Se a fila não estiver vazia, processa a mensagem
         {
-            std::unique_lock<std::mutex> lock(clientInfo.queueMutex);
+            unique_lock<mutex> lock(clientInfo.queueMutex);
             clientInfo.condition_variable.wait(lock, [&clientInfo]()
                                             { return !clientInfo.messageQueue.empty(); });
 
@@ -41,13 +42,12 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
 
             // Pega a mensagem do top da fila
             {
-                std::lock_guard<std::mutex> lock(clientInfo.queueMutex);
+                lock_guard<mutex> lock(clientInfo.queueMutex);
                 msg = clientInfo.messageQueue.front();
                 clientInfo.messageQueue.pop();
             }
-
-            std::string response;
-            std::istringstream iss(msg.content);
+            string response;
+            istringstream iss(msg.content);
             int requestId, clientNumber;
             iss >> requestId >> clientNumber;
 
@@ -61,44 +61,37 @@ void ProcessingService::processMessage(int serverSocket, const std::string &clie
                 // Verifica se o ID da requisição é o ID esperado
                 if (requestId == clientInfo.lastReq + 1)
                 {
-                    clientInfo.lastReq = requestId;
-
                     // Atualiza a soma global e o número de requisições com um mutex
                     {
-                        std::lock_guard<std::mutex> lock(globalVarMutex);
+                        lock_guard<mutex> lock(globalVarMutex);
                         globalSum += clientNumber;
                         clientInfo.lastSum = globalSum;
+                        clientInfo.lastReq = requestId;
                         serverInfo.num_reqs++;
                         serverInfo.total_sum = globalSum;
                     }
 
 
-                    response = /* Utils::getCurrentTime() + " client " + Utils::addressToString(msg.clientAddr) + */"id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum);
+                    response = " id_req " + to_string(requestId) + " value " + to_string(clientNumber) + " num_reqs " + to_string(serverInfo.num_reqs) + " total_sum " + to_string(globalSum);
                 }
                 else
                 {
                     if(requestId <= clientInfo.lastReq)
                     {
-                        response = " DUP!! " "id_req " + std::to_string(requestId) + " value " + std::to_string(clientNumber) + " num_reqs " + std::to_string(serverInfo.num_reqs) + " total_sum " + std::to_string(globalSum);
+                        response = " DUP!! " "id_req " + to_string(requestId) + " value " + to_string(clientNumber) + " num_reqs " + to_string(serverInfo.num_reqs) + " total_sum " + to_string(globalSum);
                     }
-                    // response = "Número de request incorreto";
                 }
             }
             ssize_t sentBytes = sendto(serverSocket, response.c_str(), response.size(), 0,
                                     (struct sockaddr *)&msg.clientAddr, msg.clientAddrLen);
             if (sentBytes < 0)
             {
-                std::cerr << "Erro ao enviar response ao client " << clientKey << "." << std::endl;
+                cerr << "Erro ao enviar response ao client " << clientKey << "." << endl;
             }
             else
             {
-                std::cout << Utils::getCurrentTime() + " client " + Utils::addressToString(msg.clientAddr) + " " + response << std::endl;
+                cout << Utils::getCurrentTime() + " client " + Utils::addressToString(msg.clientAddr) + " " + response << endl;
             }
         }
-    }
-
-    {
-        std::lock_guard<std::mutex> clientsLock(clientsMutex);
-        clients.erase(clientKey);
     }
 }

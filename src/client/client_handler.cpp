@@ -6,19 +6,20 @@
 #include "Global.h"
 #include "Utils.h"
 #include "ClientHandler.h"
+using namespace std;
 
 int main(int argc, char *argv[])
 {
     if (argc != 2)
     {
-        std::cerr << "Uso: " << argv[0] << " <broadcast port>" << std::endl;
+        cerr << "Uso: " << argv[0] << " <broadcast port>" << endl;
         return 1;
     }
 
-    int broadcastPort = std::atoi(argv[1]);
+    int broadcastPort = atoi(argv[1]);
     if (broadcastPort <= 0)
     {
-        std::cerr << "Numero de porta invalido" << std::endl;
+        cerr << "Numero de porta invalido" << endl;
         return 1;
     }
 
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (!clientHandler.performHandshake())
+    if (!clientHandler.findServer())
     {
         return 1;
     }
