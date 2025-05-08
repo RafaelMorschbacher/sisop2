@@ -16,7 +16,7 @@ public:
     ~ClientHandler();
 
     bool initializeSocket(int broadcastPort);
-    bool findServer();
+    bool performHandshake();
     void mainLoop();
 
 private:

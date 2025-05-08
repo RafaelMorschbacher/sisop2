@@ -9,13 +9,12 @@
 #include <netinet/in.h> 
 #include <sys/socket.h>
 #include "Message.h"
-using namespace std;
 
 struct ClientInfo {
-    thread workerThread;
-    queue<Message> messageQueue;
+    std::thread workerThread;
+    std::queue<Message> messageQueue;
     std::condition_variable condition_variable;
-    mutex queueMutex;
+    std::mutex queueMutex;
     int lastReq;
     int lastSum;
 };

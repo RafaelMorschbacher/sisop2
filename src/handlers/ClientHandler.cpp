@@ -1,7 +1,6 @@
 #include "ClientHandler.h"
 #include "Utils.h"
 #include <unistd.h>
-using namespace std;
 
 ClientHandler::ClientHandler() : clientSocket(-1), requestId(0) {}
 
@@ -18,18 +17,18 @@ bool ClientHandler::initializeSocket(int broadcastPort)
     clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
     {
-        cerr << "Erro ao criar socket" << endl;
+        std::cerr << "Erro ao criar socket" << std::endl;
         return false;
     }
 
     
 struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 10000;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 10000; // 10 milliseconds = 10,000 microseconds
 
     if (setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) 
     {
-        cerr << "Erro ao habilitar timeout" << endl;
+        perror("setsockopt SO_RCVTIMEO failed");
         close(clientSocket);
         return 1;
     }
@@ -37,7 +36,7 @@ struct timeval timeout;
     int broadcastEnable = 1;
     if (setsockopt(clientSocket, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) > 0)
     {
-        cerr << "Erro ao habilitar socket" << endl;
+        std::cerr << "Erro ao habilitar socket" << std::endl;
         close(clientSocket);
         return false;
     }
@@ -50,12 +49,12 @@ struct timeval timeout;
     return true;
 }
 
-bool ClientHandler::findServer()
+bool ClientHandler::performHandshake()
 {
     int broadcastReturn = sendto(clientSocket, BROADCAST_MESSAGE, strlen(BROADCAST_MESSAGE), 0, (struct sockaddr *)&broadcastAddr, sizeof(broadcastAddr));
     if (broadcastReturn < 0)
     {
-        cerr << "Erro ao enviar mensagem de broadcast" << endl;
+        std::cerr << "Erro ao enviar mensagem de broadcast" << std::endl;
         return false;
     }
 
@@ -63,38 +62,43 @@ bool ClientHandler::findServer()
     int recvBytes = recvfrom(clientSocket, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&serverAddr, &serverAddrLen);
     if (recvBytes < 0)
     {
-        cerr << "Erro ao receber resposta do servidor." << endl;
+        std::cerr << "Erro ao receber resposta do servidor." << std::endl;
         return false;
     }
 
     buffer[recvBytes] = '\0';
-    if (strcmp(buffer, ACKNOWLEDGEDMESSAGE) == 0)
+    if (std::strcmp(buffer, ACKNOWLEDGEDMESSAGE) == 0)
     {
-        cout << Utils::getCurrentTime() + " server_addr " +  Utils::addressToString(serverAddr) << endl;
+        //2024-10-01 18:37:00 server_addr 1.1.1.20
+        std::cout << Utils::getCurrentTime() + " server_addr " +  Utils::addressToString(serverAddr) << std::endl;
+        //std::cout << "Endereço servidor: " << Utils::addressToString(serverAddr) << std::endl;
+        // 2024-10-01 18:37:01 client 1.1.1.2  <MANDAR SÓ A PARTE DA DIREITA -> id_req 1 value 10 num_reqs 1 total_sum 1
+        //std::cout << "Handshake com o servidor com sucesso" << std::endl;
         return true;
     }
     else
     {
-        cout << "Handshake com o servidor falhou" << endl;
+        std::cout << "Handshake com o servidor falhou" << std::endl;
         return false;
     }
 }
 
 void ClientHandler::mainLoop()
 {
-    string message;
+    std::string message;
     while (true)
     {
+        // std::cout << "Informe um número para enviar ao servidor (ou 'exit' para sair): ";
         
-        getline(cin, message);
-        if (cin.eof() || message == EXIT_MESSAGE)
+        std::getline(std::cin, message);
+        if (std::cin.eof() || message == EXIT_MESSAGE)
         {
-            cout << "Desconectando do servidor..." << endl;
+            std::cout << "Desconectando do servidor..." << std::endl;
             sendto(clientSocket, EXIT_MESSAGE, 4, 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
             break;
         }
 
-        string fullMessage = to_string(++requestId) + " " + message;
+        std::string fullMessage = std::to_string(++requestId) + " " + message;
 
         sendto(clientSocket, fullMessage.c_str(), fullMessage.size(), 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
 
@@ -105,13 +109,14 @@ void ClientHandler::mainLoop()
 
             if (errno == EAGAIN || errno == EWOULDBLOCK) 
             {
-                cerr << "Erro ao receber resposta do servidor, iniciando retransmissão depois de 10 milisegundos." << endl;
+                std::cerr << "Erro ao receber resposta do servidor, iniciando retransmissão depois de 10 milisegundos." << std::endl;
+                sleep(5);
                 sendto(clientSocket, fullMessage.c_str(), fullMessage.size(), 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
                 recvBytes = recvfrom(clientSocket, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&serverAddr, &serverAddrLen);
             } 
         }
         buffer[recvBytes] = '\0';
-        cout << Utils::getCurrentTime() + " server " + Utils::addressToString(serverAddr) + buffer << endl;
+        std::cout << Utils::getCurrentTime() + " server " + Utils::addressToString(serverAddr) + buffer << std::endl;
     }
 
 

@@ -8,10 +8,9 @@
 #include <condition_variable>
 #include <netinet/in.h>
 #include <sys/socket.h>
-using namespace std;
 
 struct Message {
-    string content;
+    std::string content;
     sockaddr_in clientAddr;
     socklen_t clientAddrLen;
 };

@@ -11,8 +11,6 @@
 #include "ClientInfo.h"
 #include "Global.h"
 
-using namespace std;
-
 ServerHandler::ServerHandler(int port) : port(port), serverSocket(-1) {}
 
 ServerHandler::~ServerHandler()
@@ -28,7 +26,7 @@ bool ServerHandler::initialize()
     serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (serverSocket < 0)
     {
-        cerr << "Erro ao criar socket no servidor." << endl;
+        std::cerr << "Erro ao criar socket no servidor." << std::endl;
         return false;
     }
 
@@ -38,12 +36,12 @@ bool ServerHandler::initialize()
 
     if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        cerr << "Erro ao fazer o bind do socket ao endereço" << endl;
+        std::cerr << "Erro ao fazer o bind do socket ao endereço" << std::endl;
         close(serverSocket);
         return false;
     }
 
-    cout << Utils::getCurrentTime() + " num_reqs " << to_string(serverInfo.num_reqs) << + " total_sum " << to_string(globalSum) << endl;
+    std::cout << Utils::getCurrentTime() + " num_reqs " << std::to_string(serverInfo.num_reqs) << + " total_sum " << std::to_string(globalSum) << std::endl;
 
     return true;
 }
@@ -58,40 +56,40 @@ void ServerHandler::startListening()
                                  (struct sockaddr *)&clientAddr, &clientAddrLen);
         if (recvBytes <= 0)
         {
-            cerr << "Erro ao receber dados" << endl;
+            std::cerr << "Erro ao receber dados" << std::endl;
             continue;
         }
 
         buffer[recvBytes] = '\0';
-        string message(buffer);
+        std::string message(buffer);
 
-        if (strcmp(message.c_str(), BROADCAST_MESSAGE) == 0)
+        if (std::strcmp(message.c_str(), BROADCAST_MESSAGE) == 0)
         {
             DiscoveryService::handleDiscoveryMessage(serverSocket, clientAddr, clientAddrLen);
             continue;
         }
 
-        if (strcmp(message.c_str(), EXIT_MESSAGE) == 0)
+        if (std::strcmp(message.c_str(), EXIT_MESSAGE) == 0)
         {
             InterfaceService::handleExitMessage(serverSocket, clientAddr, clientAddrLen);
             continue;
         }
 
-        string clientKey = Utils::addressToString(clientAddr);
+        std::string clientKey = Utils::addressToString(clientAddr);
         {
-            lock_guard<mutex> lock(clientsMutex);
+            std::lock_guard<std::mutex> lock(clientsMutex);
             auto it = clients.find(clientKey);
             if (it != clients.end())
             {
                 {
-                    lock_guard<mutex> queueLock(it->second.queueMutex);
+                    std::lock_guard<std::mutex> queueLock(it->second.queueMutex);
                     it->second.messageQueue.push(Message{message, clientAddr, clientAddrLen});
                 }
                 it->second.condition_variable.notify_one();
             }
             else
             {
-                cout << "Mensagem recebida de um cliente não registrado na lista de clientes: " << clientKey << "." << endl;
+                std::cout << "Mensagem recebida de um cliente não registrado na lista de clientes: " << clientKey << "." << std::endl;
             }
         }
     }
